@@ -1,30 +1,100 @@
 from products import Product
 from store import Store
 
-def main():
-    # Creating a list of products
-    product_list = [
-        Product("MacBook Air M2", price=1450, quantity=100),
-        Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-        Product("Google Pixel 7", price=500, quantity=250),
-    ]
+# Setup initial stock of inventory
+product_list = [
+    Product("MacBook Air M2", price=1450, quantity=100),
+    Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+    Product("Google Pixel 7", price=500, quantity=250),
+]
 
-    # Creating a Store instance
-    best_buy = Store(product_list)
+# Create a Store instance
+best_buy = Store(product_list)
 
-    # Get all active products
-    available_products = best_buy.get_all_products()
-    print(f"Total Products Available: {len(available_products)}")
 
-    # Print total quantity of all items
-    print(f"Total quantity in store: {best_buy.get_total_quantity()}")
+def start(store: Store):
+    """
+    Starts the user interface for interacting with the store.
+    :param store: Store object containing the inventory
+    """
+    while True:
+        print("\n   Store Menu   ")
+        print("   ----------")
+        print("1. List all products in store")
+        print("2. Show total amount in store")
+        print("3. Make an order")
+        print("4. Quit")
 
-    # Placing an order
-    order_cost = best_buy.order([
-        (available_products[0], 1),  # MacBook Air M2 x1
-        (available_products[1], 2)   # Bose Earbuds x2
-    ])
-    print(f"Order cost: ${order_cost}")
+        choice = input("Please choose a number: ")
+
+        if choice == "1":
+            # List all available products
+            print("------")
+            products = store.get_all_products()
+            if not products:
+                print("🚫 No products available.")
+            else:
+                for idx, product in enumerate(products, start=1):
+                    print(f"{idx}. {product.show()}")
+            print("------")
+
+        elif choice == "2":
+            total_quantity = store.get_total_quantity()
+            print(f"Total of {total_quantity} items in store")
+
+        elif choice == "3":
+            # Making an order
+            products = store.get_all_products()
+            shopping_list = []
+
+            if not products:
+                print("🚫 No products available to order.")
+                continue
+
+            print("------")
+            for idx, product in enumerate(products, start=1):
+                print(f"{idx}. {product.show()}")
+            print("------")
+
+            while True:
+                product_num = input("Which product # do you want? (Press Enter to finish order) ")
+                if product_num.strip() == "":
+                    break  # User wants to finish order
+
+                try:
+                    product_num = int(product_num)
+                    if product_num < 1 or product_num > len(products):
+                        print("❌ Invalid product number, please try again.")
+                        continue
+
+                    quantity = input("What amount do you want? ")
+                    quantity = int(quantity)
+
+                    # Add to order list
+                    selected_product = products[product_num - 1]
+                    shopping_list.append((selected_product, quantity))
+                    print("Product added to list!")
+
+                except ValueError:
+                    print("❌ Invalid input. Please enter a valid number.")
+
+            # Process the order
+            if shopping_list:
+                try:
+                    total_price = store.order(shopping_list)
+                    print(f"✅ Order placed successfully! Total cost: ${total_price:.2f}")
+                except ValueError as e:
+                    print(f"❌ Order failed: {e}")
+            else:
+                print("❌ No items were ordered.")
+
+        elif choice == "4":
+            print("👋 Goodbye! Thank you for shopping at Best Buy 🛒")
+            break
+
+        else:
+            print("❌ Invalid choice, please enter a number between 1-4.")
+
 
 if __name__ == "__main__":
-    main()
+    start(best_buy)
