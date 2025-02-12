@@ -1,19 +1,30 @@
 from products import Product
+from store import Store
 
 def main():
-    # Creating products
-    bose = Product("Bose QuietComfort Earbuds", price=250, quantity=500)
-    mac = Product("MacBook Air M2", price=1450, quantity=100)
+    # Creating a list of products
+    product_list = [
+        Product("MacBook Air M2", price=1450, quantity=100),
+        Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+        Product("Google Pixel 7", price=500, quantity=250),
+    ]
 
-    print(bose.buy(50))
-    print(mac.buy(100))
-    print(mac.is_active())
+    # Creating a Store instance
+    best_buy = Store(product_list)
 
-    bose.show()
-    mac.show()
+    # Get all active products
+    available_products = best_buy.get_all_products()
+    print(f"Total Products Available: {len(available_products)}")
 
-    bose.set_quantity(1000)
-    bose.show()
+    # Print total quantity of all items
+    print(f"Total quantity in store: {best_buy.get_total_quantity()}")
+
+    # Placing an order
+    order_cost = best_buy.order([
+        (available_products[0], 1),  # MacBook Air M2 x1
+        (available_products[1], 2)   # Bose Earbuds x2
+    ])
+    print(f"Order cost: ${order_cost}")
 
 if __name__ == "__main__":
     main()
