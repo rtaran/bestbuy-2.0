@@ -28,7 +28,6 @@ def start(store: Store):
         choice = input("Please choose a number: ")
 
         if choice == "1":
-            # List all available products
             print("------")
             products = store.get_all_products()
             if not products:
@@ -40,10 +39,11 @@ def start(store: Store):
 
         elif choice == "2":
             total_quantity = store.get_total_quantity()
-            print(f"Total of {total_quantity} items in store")
+            print("\n---------------------------------------")
+            print(f"✨ TOTAL AMOUNT IN STORE: {total_quantity} items ✨")
+            print("---------------------------------------")
 
         elif choice == "3":
-            # Making an order
             products = store.get_all_products()
             shopping_list = []
 
@@ -78,7 +78,6 @@ def start(store: Store):
                 except ValueError:
                     print("❌ Invalid input. Please enter a valid number.")
 
-            # Process the order
             if shopping_list:
                 try:
                     total_price = store.order(shopping_list)

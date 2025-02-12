@@ -1,5 +1,5 @@
-from products import Product # Import the Product class
 from typing import List, Tuple
+from products import Product  # Import the Product class
 
 class Store:
     def __init__(self, products: List[Product]):
@@ -29,8 +29,9 @@ class Store:
         :return: Total price of the order.
         """
         total_price = 0
-        for product in shopping_list:
-            product, quantity = product
-            total_price += product.buy(quantity)
 
-        return total_price
+        for item in shopping_list:
+            product, quantity = item  # Unpack tuple (Product object, quantity)
+            total_price += product.buy(quantity)  # Call the buy() method on product
+
+        return total_price  # Return total price of the order
