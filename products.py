@@ -1,9 +1,3 @@
-# ====================================================
-#  Best Buy 2.0 - Product Class
-# ====================================================
-#  Handles product creation, validation, and purchasing
-# ====================================================
-
 class Product:
     def __init__(self, name: str, price: float, quantity: int):
         """Initializes a new product with name, price, and quantity."""
@@ -17,7 +11,7 @@ class Product:
         self.name = name
         self.price = price
         self.quantity = quantity
-        self.active = True  # ✅ Fix: Ensuring it updates correctly
+        self.active = True  # Product is active when created
 
     def get_quantity(self) -> int:
         """Returns the current quantity of the product."""
@@ -56,4 +50,59 @@ class Product:
 
         total_price = self.price * quantity
         self.set_quantity(self.quantity - quantity)
-        return total_price  # ✅ Fix: Keeping original logic
+        return total_price
+
+
+# ✅ NonStockedProduct (No Quantity Tracking)
+class NonStockedProduct(Product):
+    def __init__(self, name: str, price: float):
+        """Non-stocked products always have quantity set to 0."""
+        super().__init__(name, price, quantity=0)
+
+    def set_quantity(self, quantity: int):
+        """Non-stocked products should never have their quantity changed."""
+        raise ValueError("Cannot change quantity of a non-stocked product.")
+
+    def buy(self, quantity: int) -> float:
+        """Purchase is always valid for non-stocked products."""
+        if quantity <= 0:
+            raise ValueError("Purchase quantity must be greater than zero.")
+        return self.price * quantity  # No stock reduction
+
+    def show(self) -> str:
+        """Display product details indicating it's a non-stocked product."""
+        return f"{self.name}, Price: ${self.price}, Quantity: Unlimited"
+
+
+# ✅ LimitedProduct (Restrict Max Purchase Per Order)
+class LimitedProduct(Product):
+    def __init__(self, name: str, price: float, quantity: int, maximum: int):
+        """Limited products have a purchase restriction per order."""
+        super().__init__(name, price, quantity)
+        self.maximum = maximum
+
+    def buy(self, quantity: int) -> float:
+        """Restricts purchase to the allowed maximum per order."""
+        if quantity > self.maximum:
+            raise ValueError(f"Error while making order! Only {self.maximum} is allowed from this product!")
+        return super().buy(quantity)
+
+    def show(self) -> str:
+        """Display product details including purchase restriction."""
+        return f"{self.name}, Price: ${self.price}, Limited to {self.maximum} per order!"
+
+
+# ✅ Example Testing Code (Copy-Paste to main.py for Testing)
+if __name__ == "__main__":
+    # Sample Product List with New Classes
+    product_list = [
+        Product("MacBook Air M2", price=1450, quantity=100),
+        Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+        Product("Google Pixel 7", price=500, quantity=250),
+        NonStockedProduct("Windows License", price=125),
+        LimitedProduct("Shipping", price=10, quantity=250, maximum=1),
+    ]
+
+    # Print Product Details
+    for product in product_list:
+        print(product.show())
