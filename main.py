@@ -34,7 +34,7 @@ def start(store: Store):
                 print("🚫 No products available.")
             else:
                 for idx, product in enumerate(products, start=1):
-                    print(f"{idx}. {product.show()}")
+                    print(f"{idx}. {product}")
             print("------")
 
         elif choice == "2":
@@ -53,7 +53,7 @@ def start(store: Store):
 
             print("------")
             for idx, product in enumerate(products, start=1):
-                print(f"{idx}. {product.show()}")
+                print(f"{idx}. {product}")
             print("------")
 
             while True:

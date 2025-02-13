@@ -16,11 +16,11 @@ class Store:
 
     def get_total_quantity(self) -> int:
         """Returns the total number of items in the store."""
-        return sum(product.get_quantity() for product in self.products if product.is_active())
+        return sum(product.quantity for product in self.products if product.is_active)
 
     def get_all_products(self) -> List[Product]:
         """Returns all active products in the store."""
-        return [product for product in self.products if product.is_active()]
+        return [product for product in self.products if product.is_active]
 
     def order(self, shopping_list: List[Tuple[Product, int]]) -> float:
         """
