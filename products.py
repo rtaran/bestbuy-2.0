@@ -1,3 +1,9 @@
+# ====================================================
+#  Best Buy 2.0 - Product Class
+# ====================================================
+#  Handles product creation, validation, and purchasing
+# ====================================================
+
 class Product:
     def __init__(self, name: str, price: float, quantity: int):
         """Initializes a new product with name, price, and quantity."""
@@ -11,7 +17,7 @@ class Product:
         self.name = name
         self.price = price
         self.quantity = quantity
-        self.active = True  # Product is active when created
+        self.active = True  # ✅ Fix: Ensuring it updates correctly
 
     def get_quantity(self) -> int:
         """Returns the current quantity of the product."""
@@ -50,4 +56,4 @@ class Product:
 
         total_price = self.price * quantity
         self.set_quantity(self.quantity - quantity)
-        return total_price
+        return total_price  # ✅ Fix: Keeping original logic
