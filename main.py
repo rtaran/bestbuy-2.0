@@ -1,12 +1,24 @@
-from products import Product
+from products import Product, NonStockedProduct, LimitedProduct, PercentDiscount, SecondHalfPrice, ThirdOneFree
 from store import Store
+
+# Create promotions
+second_half_price = SecondHalfPrice("Second Half price!")
+third_one_free = ThirdOneFree("Third One Free!")
+thirty_percent_off = PercentDiscount("30% off!", 30)
 
 # Setup initial stock of inventory
 product_list = [
     Product("MacBook Air M2", price=1450, quantity=100),
     Product("Bose QuietComfort Earbuds", price=250, quantity=500),
     Product("Google Pixel 7", price=500, quantity=250),
+    NonStockedProduct("Windows License", price=125),
+    LimitedProduct("Shipping", price=10, quantity=1000, maximum=1)
 ]
+
+# Apply promotions to products
+product_list[0].promotion = second_half_price
+product_list[1].promotion = third_one_free
+product_list[3].promotion = thirty_percent_off
 
 # Create a Store instance
 best_buy = Store(product_list)

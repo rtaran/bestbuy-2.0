@@ -148,6 +148,7 @@ class NonStockedProduct(Product):
 
     def __init__(self, name: str, price: float):
         super().__init__(name, price, quantity=0)  # Always 0 quantity
+        self._active = True  # Always active
 
     @Product.quantity.setter
     def quantity(self, new_quantity: int):
@@ -157,6 +158,10 @@ class NonStockedProduct(Product):
     def buy(self, quantity: int) -> float:
         """Non-stocked products have unlimited availability."""
         return self._promotion.apply_promotion(self, quantity) if self._promotion else self._price * quantity
+
+    def __str__(self) -> str:
+        promo_text = f", Promotion: {self._promotion}" if self._promotion else ", Promotion: None"
+        return f"{self._name}, Price: ${self._price}, Quantity: Unlimited" + promo_text
 
 
 class LimitedProduct(Product):
@@ -171,3 +176,7 @@ class LimitedProduct(Product):
         if quantity > self._maximum:
             raise ValueError(f"Error while making order! Only {self._maximum} is allowed from this product!")
         return super().buy(quantity)
+
+    def __str__(self) -> str:
+        promo_text = f", Promotion: {self._promotion}" if self._promotion else ", Promotion: None"
+        return f"{self._name}, Price: ${self._price}, Limited to {self._maximum} per order!" + promo_text
