@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-
 class Promotion(ABC):
     """Abstract class for promotions."""
 
     def __init__(self, name: str):
         self.name = name
+        self._active = True # Use _active to avoid shadowing is_active property
 
     @abstractmethod
     def apply_promotion(self, product, quantity: int) -> float:
@@ -15,7 +15,6 @@ class Promotion(ABC):
 
     def __str__(self):
         return self.name
-
 
 # 🎁 Promotion 1: Percentage Discount
 class PercentDiscount(Promotion):
@@ -27,7 +26,6 @@ class PercentDiscount(Promotion):
         """Applies a percentage discount to the total price."""
         return product.price * quantity * (1 - self.percent / 100)
 
-
 # 🎁 Promotion 2: Second Item at Half Price
 class SecondHalfPrice(Promotion):
     def apply_promotion(self, product, quantity: int) -> float:
@@ -36,14 +34,12 @@ class SecondHalfPrice(Promotion):
         half_price_items = quantity // 2
         return (full_price_items * product.price) + (half_price_items * product.price * 0.5)
 
-
 # 🎁 Promotion 3: Buy 2, Get 1 Free
 class ThirdOneFree(Promotion):
     def apply_promotion(self, product, quantity: int) -> float:
         """Applies the 'Buy 2, Get 1 Free' discount."""
         payable_items = quantity - (quantity // 3)
         return payable_items * product.price
-
 
 class Product:
     def __init__(self, name: str, price: float, quantity: int):
@@ -142,7 +138,6 @@ class Product:
             return NotImplemented
         return self._price < other._price
 
-
 class NonStockedProduct(Product):
     """A product that does not have a stock limit (e.g., software licenses)."""
 
@@ -162,7 +157,6 @@ class NonStockedProduct(Product):
     def __str__(self) -> str:
         promo_text = f", Promotion: {self._promotion}" if self._promotion else ", Promotion: None"
         return f"{self._name}, Price: ${self._price}, Quantity: Unlimited" + promo_text
-
 
 class LimitedProduct(Product):
     """A product that has a purchase limit per order (e.g., shipping fee)."""

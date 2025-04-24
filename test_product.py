@@ -26,7 +26,9 @@ def test_product_purchase():
 
 
 def test_buy_too_much():
-    """Test that buying a larger quantity than exists invokes exception."""
+    """Test that buying
+
+     a larger quantity than exists invokes exception."""
     product = Product("Smartphone", 800, 2)
     with pytest.raises(ValueError):
         product.buy(5)  # ✅ Should raise an exception

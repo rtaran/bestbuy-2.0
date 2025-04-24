@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from products import Product  # Import the Product class
+from products import Product, NonStockedProduct  # Import the Product class
 
 class Store:
     def __init__(self, products: List[Product]):
@@ -20,7 +20,8 @@ class Store:
 
     def get_all_products(self) -> List[Product]:
         """Returns all active products in the store."""
-        return [product for product in self.products if product.is_active]
+        return [product for product in self.products if product.is_active and
+                (product.quantity > 0 or isinstance(product, NonStockedProduct))]
 
     def order(self, shopping_list: List[Tuple[Product, int]]) -> float:
         """
