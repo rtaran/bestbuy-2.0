@@ -31,8 +31,16 @@ class Store:
         """
         total_price = 0
 
-        for item in shopping_list:
-            product, quantity = item  # Unpack tuple (Product object, quantity)
+        # Consolidate quantities for the same product
+        consolidated_list = {}
+        for product, quantity in shopping_list:
+            if product in consolidated_list:
+                consolidated_list[product] += quantity
+            else:
+                consolidated_list[product] = quantity
+
+        # Process the consolidated order
+        for product, quantity in consolidated_list.items():
             total_price += product.buy(quantity)  # Call the buy() method on product
 
         return total_price  # Return total price of the order
