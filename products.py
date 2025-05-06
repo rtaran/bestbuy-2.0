@@ -1,49 +1,102 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
+
 class Promotion(ABC):
     """Abstract class for promotions."""
 
     def __init__(self, name: str):
+        """
+        Initialize a promotion with a name.
+
+        :param name: The name of the promotion
+        """
         self.name = name
-        self._active = True # Use _active to avoid shadowing is_active property
+        self._active = True  # Use _active to avoid shadowing is_active property
 
     @abstractmethod
     def apply_promotion(self, product, quantity: int) -> float:
-        """Applies the promotion to the given product and quantity."""
+        """
+        Applies the promotion to the given product and quantity.
+
+        :param product: The product to apply the promotion to
+        :param quantity: The quantity of the product
+        :return: The discounted price
+        """
         pass
 
     def __str__(self):
+        """Return the string representation of the promotion."""
         return self.name
 
-# 🎁 Promotion 1: Percentage Discount
+
 class PercentDiscount(Promotion):
+    """Promotion that applies a percentage discount to the product price."""
+
     def __init__(self, name: str, percent: float):
+        """
+        Initialize a percentage discount promotion.
+
+        :param name: The name of the promotion
+        :param percent: The discount percentage
+        """
         super().__init__(name)
         self.percent = percent
 
     def apply_promotion(self, product, quantity: int) -> float:
-        """Applies a percentage discount to the total price."""
+        """
+        Applies a percentage discount to the total price.
+
+        :param product: The product to apply the promotion to
+        :param quantity: The quantity of the product
+        :return: The discounted price
+        """
         return product.price * quantity * (1 - self.percent / 100)
 
-# 🎁 Promotion 2: Second Item at Half Price
+
 class SecondHalfPrice(Promotion):
+    """Promotion that applies 'Second Item at Half Price' discount."""
+
     def apply_promotion(self, product, quantity: int) -> float:
-        """Applies the 'Second Item at Half Price' discount."""
+        """
+        Applies the 'Second Item at Half Price' discount.
+
+        :param product: The product to apply the promotion to
+        :param quantity: The quantity of the product
+        :return: The discounted price
+        """
         full_price_items = quantity // 2 + quantity % 2
         half_price_items = quantity // 2
         return (full_price_items * product.price) + (half_price_items * product.price * 0.5)
 
-# 🎁 Promotion 3: Buy 2, Get 1 Free
+
 class ThirdOneFree(Promotion):
+    """Promotion that applies 'Buy 2, Get 1 Free' discount."""
+
     def apply_promotion(self, product, quantity: int) -> float:
-        """Applies the 'Buy 2, Get 1 Free' discount."""
+        """
+        Applies the 'Buy 2, Get 1 Free' discount.
+
+        :param product: The product to apply the promotion to
+        :param quantity: The quantity of the product
+        :return: The discounted price
+        """
         payable_items = quantity - (quantity // 3)
         return payable_items * product.price
 
+
 class Product:
+    """Base class for all products in the store."""
+
     def __init__(self, name: str, price: float, quantity: int):
-        """Initializes a new product with name, price, and quantity."""
+        """
+        Initializes a new product with name, price, and quantity.
+
+        :param name: The name of the product
+        :param price: The price of the product
+        :param quantity: The initial quantity of the product
+        :raises ValueError: If name is empty, price or quantity is negative
+        """
         if not name:
             raise ValueError("Product name cannot be empty.")
         if price < 0:
@@ -56,6 +109,10 @@ class Product:
         self._quantity = quantity
         self._active = True  # Product is active when created
         self._promotion: Optional[Promotion] = None  # Default: No promotion
+
+        # Deactivate product if quantity is 0
+        if quantity == 0:
+            self.deactivate()
 
     # 🏷️ Property for name (read-only)
     @property
@@ -142,35 +199,68 @@ class NonStockedProduct(Product):
     """A product that does not have a stock limit (e.g., software licenses)."""
 
     def __init__(self, name: str, price: float):
+        """
+        Initialize a non-stocked product with name and price.
+
+        :param name: The name of the product
+        :param price: The price of the product
+        """
         super().__init__(name, price, quantity=0)  # Always 0 quantity
         self._active = True  # Always active
 
     @Product.quantity.setter
     def quantity(self, new_quantity: int):
-        """Quantity of non-stocked products should never change."""
+        """
+        Quantity of non-stocked products should never change.
+
+        :param new_quantity: Attempted new quantity value
+        :raises ValueError: Always raises this error
+        """
         raise ValueError("Non-stocked products cannot have a quantity.")
 
     def buy(self, quantity: int) -> float:
-        """Non-stocked products have unlimited availability."""
+        """
+        Non-stocked products have unlimited availability.
+
+        :param quantity: The quantity to buy
+        :return: The total price
+        """
         return self._promotion.apply_promotion(self, quantity) if self._promotion else self._price * quantity
 
     def __str__(self) -> str:
+        """Return the string representation of the non-stocked product."""
         promo_text = f", Promotion: {self._promotion}" if self._promotion else ", Promotion: None"
         return f"{self._name}, Price: ${self._price}, Quantity: Unlimited" + promo_text
+
 
 class LimitedProduct(Product):
     """A product that has a purchase limit per order (e.g., shipping fee)."""
 
     def __init__(self, name: str, price: float, quantity: int, maximum: int):
+        """
+        Initialize a limited product with name, price, quantity, and maximum purchase limit.
+
+        :param name: The name of the product
+        :param price: The price of the product
+        :param quantity: The initial quantity of the product
+        :param maximum: The maximum quantity allowed per order
+        """
         super().__init__(name, price, quantity)
         self._maximum = maximum  # Maximum quantity allowed per order
 
     def buy(self, quantity: int) -> float:
-        """Prevents buying more than the allowed quantity per order."""
+        """
+        Prevents buying more than the allowed quantity per order.
+
+        :param quantity: The quantity to buy
+        :return: The total price
+        :raises ValueError: If quantity exceeds the maximum allowed
+        """
         if quantity > self._maximum:
             raise ValueError(f"Error while making order! Only {self._maximum} is allowed from this product!")
         return super().buy(quantity)
 
     def __str__(self) -> str:
+        """Return the string representation of the limited product."""
         promo_text = f", Promotion: {self._promotion}" if self._promotion else ", Promotion: None"
         return f"{self._name}, Price: ${self._price}, Limited to {self._maximum} per order!" + promo_text

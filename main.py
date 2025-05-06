@@ -1,3 +1,10 @@
+"""
+Main module for the Best Buy store application.
+
+This module initializes the store with products and promotions,
+and provides a command-line interface for interacting with the store.
+"""
+
 from products import Product, NonStockedProduct, LimitedProduct, PercentDiscount, SecondHalfPrice, ThirdOneFree
 from store import Store
 
@@ -24,6 +31,11 @@ product_list[3].promotion = thirty_percent_off
 best_buy = Store(product_list)
 
 def list_products(store):
+    """
+    List all active products in the store.
+
+    :param store: Store object containing the inventory
+    """
     print("------")
     products = store.get_all_products()
     if not products:
@@ -34,12 +46,22 @@ def list_products(store):
     print("------")
 
 def show_total_quantity(store):
+    """
+    Display the total quantity of items in the store.
+
+    :param store: Store object containing the inventory
+    """
     total_quantity = store.get_total_quantity()
     print("\n---------------------------------------")
     print(f"✨ TOTAL AMOUNT IN STORE: {total_quantity} items ✨")
     print("---------------------------------------")
 
 def make_order(store):
+    """
+    Allow the user to make an order by selecting products and quantities.
+
+    :param store: Store object containing the inventory
+    """
     products = store.get_all_products()
     shopping_list = []
 
@@ -81,6 +103,9 @@ def make_order(store):
         print("❌ No items were ordered.")
 
 def quit_program():
+    """
+    Exit the program with a goodbye message.
+    """
     print("👋 Goodbye! Thank you for shopping at Best Buy 🛒")
     exit()
 
