@@ -114,14 +114,22 @@ class Product:
         if quantity == 0:
             self.deactivate()
 
-    # 🏷️ Property for name (read-only)
     @property
     def name(self) -> str:
+        """
+        Get the name of the product (read-only).
+
+        :return: The product name
+        """
         return self._name
 
-    # 💲 Property for price with validation
     @property
     def price(self) -> float:
+        """
+        Get the price of the product.
+
+        :return: The product price
+        """
         return self._price
 
     @price.setter
@@ -130,9 +138,13 @@ class Product:
             raise ValueError("Product price cannot be negative.")
         self._price = new_price
 
-    # 📦 Property for quantity
     @property
     def quantity(self) -> int:
+        """
+        Get the current quantity of the product.
+
+        :return: The product quantity
+        """
         return self._quantity
 
     @quantity.setter
@@ -156,9 +168,13 @@ class Product:
         """Deactivates the product."""
         self._active = False
 
-    # 🎁 Property for promotion
     @property
     def promotion(self) -> Optional[Promotion]:
+        """
+        Get the current promotion applied to the product.
+
+        :return: The promotion object or None if no promotion is applied
+        """
         return self._promotion
 
     @promotion.setter
@@ -173,13 +189,20 @@ class Product:
             raise ValueError("Not enough stock available.")
 
         # Apply promotion if exists
-        total_price = self._promotion.apply_promotion(self, quantity) if self._promotion else self._price * quantity
+        if self._promotion:
+            total_price = self._promotion.apply_promotion(self, quantity)
+        else:
+            total_price = self._price * quantity
         self._quantity -= quantity
         return total_price
 
     # 📝 Magic Method: Convert to string
     def __str__(self) -> str:
-        promo_text = f", Promotion: {self._promotion}" if self._promotion else ", Promotion: None"
+        """Return the string representation of the product."""
+        if self._promotion:
+            promo_text = f", Promotion: {self._promotion}"
+        else:
+            promo_text = ", Promotion: None"
         return f"{self._name}, Price: ${self._price}, Quantity: {self._quantity}" + promo_text
 
     # 🔼🔽 Magic Methods: Compare prices
@@ -225,11 +248,17 @@ class NonStockedProduct(Product):
         :param quantity: The quantity to buy
         :return: The total price
         """
-        return self._promotion.apply_promotion(self, quantity) if self._promotion else self._price * quantity
+        if self._promotion:
+            return self._promotion.apply_promotion(self, quantity)
+        else:
+            return self._price * quantity
 
     def __str__(self) -> str:
         """Return the string representation of the non-stocked product."""
-        promo_text = f", Promotion: {self._promotion}" if self._promotion else ", Promotion: None"
+        if self._promotion:
+            promo_text = f", Promotion: {self._promotion}"
+        else:
+            promo_text = ", Promotion: None"
         return f"{self._name}, Price: ${self._price}, Quantity: Unlimited" + promo_text
 
 
@@ -262,5 +291,8 @@ class LimitedProduct(Product):
 
     def __str__(self) -> str:
         """Return the string representation of the limited product."""
-        promo_text = f", Promotion: {self._promotion}" if self._promotion else ", Promotion: None"
+        if self._promotion:
+            promo_text = f", Promotion: {self._promotion}"
+        else:
+            promo_text = ", Promotion: None"
         return f"{self._name}, Price: ${self._price}, Limited to {self._maximum} per order!" + promo_text

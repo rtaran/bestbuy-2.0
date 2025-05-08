@@ -5,7 +5,10 @@ This module initializes the store with products and promotions,
 and provides a command-line interface for interacting with the store.
 """
 
-from products import Product, NonStockedProduct, LimitedProduct, PercentDiscount, SecondHalfPrice, ThirdOneFree
+from products import (
+    Product, NonStockedProduct, LimitedProduct,
+    PercentDiscount, SecondHalfPrice, ThirdOneFree
+)
 from store import Store
 
 # Create promotions
